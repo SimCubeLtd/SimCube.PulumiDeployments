@@ -9,4 +9,5 @@ public static class KubernetesLiterals
     public const string PvcAccessModeReadWriteOnce = "ReadWriteOnce";
     public const string PvcAccessModeReadWriteMany = "ReadWriteMany";
     public const string PvcAccessResourceRequestStorage = "storage";
+    public const string DefaultSelectorKey = "app";
 }

@@ -3,7 +3,7 @@
 /// <inheritdoc />
 public sealed class ServiceResource : ComponentResource
 {
-    private ServiceResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, ComponentResourceOptions? options = null)
+    private ServiceResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorKeyValue, ComponentResourceOptions? options = null)
         : base(nameof(ServiceResource), name, options)
     {
         Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
@@ -19,24 +19,24 @@ public sealed class ServiceResource : ComponentResource
                     Namespace = @namespace.NamespaceName,
                     Name = name,
                 },
-                Spec = CreateServiceSpec(deploymentConfiguration),
+                Spec = CreateServiceSpec(deploymentConfiguration, defaultSelectorKeyValue),
             }, customResourceOptions);
     }
 
     public Service Service { get; }
 
-    public static ServiceResource Create(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, ComponentResourceOptions? componentResourceOptions = null)
+    public static ServiceResource Create(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorKeyValue, ComponentResourceOptions? componentResourceOptions = null)
     {
         Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
 
-        var service = new ServiceResource(@namespace, name, deploymentConfiguration, componentResourceOptions);
+        var service = new ServiceResource(@namespace, name, deploymentConfiguration, defaultSelectorKeyValue, componentResourceOptions);
 
         componentResourceOptions?.DependsOn.Add(service.Service);
 
         return service;
     }
 
-    private static ServiceSpecArgs CreateServiceSpec(DeploymentConfiguration deploymentConfiguration)
+    private static ServiceSpecArgs CreateServiceSpec(DeploymentConfiguration deploymentConfiguration, string defaultSelectorKeyValue)
         => new()
         {
             Ports = new List<ServicePortArgs>
@@ -49,5 +49,9 @@ public sealed class ServiceResource : ComponentResource
                 },
             },
             Type = deploymentConfiguration.ServiceType,
+            Selector =
+            {
+                { KubernetesLiterals.DefaultSelectorKey, defaultSelectorKeyValue },
+            },
         };
 }
