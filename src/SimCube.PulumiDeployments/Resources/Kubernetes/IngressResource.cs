@@ -109,7 +109,8 @@ public sealed class IngressResource : ComponentResource
                 Hosts = new List<string>
                 {
                     x.Hostname,
-                }
+                },
+                SecretName = x.SecretName,
             }).ToArray();
 
     private static Dictionary<string, string> CreateAnnotations(IReadOnlyList<IngressConfiguration> ingressConfiguration)
