@@ -6,6 +6,8 @@ namespace SimCube.PulumiDeployments.Resources.Kubernetes;
 /// <inheritdoc />
 public sealed class DeploymentResource : ComponentResource
 {
+    private const string DefaultLabel = nameof(DefaultLabel);
+
     private DeploymentResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? options = null)
         : base(nameof(DeploymentResource), name, options)
     {
@@ -27,10 +29,10 @@ public sealed class DeploymentResource : ComponentResource
                 {
                     Namespace = @namespace.NamespaceName,
                     Name = name,
-                    Labels = new Dictionary<string, string>
+                    Labels =
                     {
-                        ["app"] = name,
-                    },
+                        { DefaultLabel, name },
+                    }
                 },
                 Spec = CreateDeploymentSpec(deploymentConfiguration, name, envVariables)
             }, customResourceOptions);
@@ -53,21 +55,26 @@ public sealed class DeploymentResource : ComponentResource
         => new()
         {
             Replicas = deploymentConfiguration.Replicas,
-            Selector = new LabelSelectorArgs()
+            Selector = new LabelSelectorArgs
             {
-                MatchLabels = new Dictionary<string, string>
+                MatchLabels =
                 {
-                    ["app"] = name,
+                    { DefaultLabel, name },
                 },
             },
-            Template = CreatePodTemplate(deploymentConfiguration, envVarArgsList),
+            Template = CreatePodTemplate(deploymentConfiguration, name, envVarArgsList),
         };
 
-    private static PodTemplateSpecArgs CreatePodTemplate(
-        DeploymentConfiguration deploymentConfiguration,
-        List<EnvVarArgs>? envVarArgsList)
+    private static PodTemplateSpecArgs CreatePodTemplate(DeploymentConfiguration deploymentConfiguration, string name, List<EnvVarArgs>? envVarArgsList)
         => new()
         {
+            Metadata = new ObjectMetaArgs
+            {
+                Labels =
+                {
+                    { DefaultLabel, name },
+                },
+            },
             Spec = new PodSpecArgs
             {
                 Containers = new List<ContainerArgs>
