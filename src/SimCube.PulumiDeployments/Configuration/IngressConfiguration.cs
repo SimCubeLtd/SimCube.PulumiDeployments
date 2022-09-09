@@ -12,5 +12,6 @@ public sealed class IngressConfiguration
     public int Port { get; init; } = 5000;
     public bool GenerateCertificate { get; init; }
     public string ClusterIssuer { get; init; } = default!;
+    public string SecretName { get; init; } = default!;
     public string IngressClassName { get; set; } = default!;
 }
