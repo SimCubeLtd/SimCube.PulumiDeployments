@@ -47,7 +47,8 @@ public sealed class IngressResource : ComponentResource
 
     public Ingress Ingress { get; }
 
-    public static IngressResource Create(NamespaceResource @namespace, string name, IngressConfiguration[] ingressConfiguration, string? serviceName = null, ComponentResourceOptions? componentResourceOptions = null)
+    public static IngressResource Create(NamespaceResource @namespace, string name, IngressConfiguration[] ingressConfiguration,
+        string? serviceName = null, ComponentResourceOptions? componentResourceOptions = null)
     {
         Guard.Against.Null(ingressConfiguration, nameof(ingressConfiguration));
         Guard.Against.Null(@namespace, nameof(@namespace));

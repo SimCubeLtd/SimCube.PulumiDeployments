@@ -6,12 +6,11 @@ namespace SimCube.PulumiDeployments.Resources.Kubernetes;
 /// <inheritdoc />
 public sealed class DeploymentResource : ComponentResource
 {
-    private const string DefaultLabel = nameof(DefaultLabel);
-
-    private DeploymentResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? options = null)
+    private DeploymentResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorValue, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? options = null)
         : base(nameof(DeploymentResource), name, options)
     {
         Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
+        Guard.Against.NullOrEmpty(defaultSelectorValue, nameof(defaultSelectorValue));
 
         var customResourceOptions = new CustomResourceOptions
         {
@@ -31,27 +30,27 @@ public sealed class DeploymentResource : ComponentResource
                     Name = name,
                     Labels =
                     {
-                        { DefaultLabel, name },
+                        { KubernetesLiterals.DefaultSelectorKey, defaultSelectorValue },
                     }
                 },
-                Spec = CreateDeploymentSpec(deploymentConfiguration, name, envVariables)
+                Spec = CreateDeploymentSpec(deploymentConfiguration, defaultSelectorValue, envVariables)
             }, customResourceOptions);
     }
 
     public Deployment Deployment { get; }
 
-    public static DeploymentResource Create(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? componentResourceOptions = null)
+    public static DeploymentResource Create(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorValue, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? componentResourceOptions = null)
     {
         Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
 
-        var deployment = new DeploymentResource(@namespace, name, deploymentConfiguration, envVariables, componentResourceOptions);
+        var deployment = new DeploymentResource(@namespace, name, deploymentConfiguration, defaultSelectorValue, envVariables, componentResourceOptions);
 
         componentResourceOptions?.DependsOn.Add(deployment.Deployment);
 
         return deployment;
     }
 
-    private static DeploymentSpecArgs CreateDeploymentSpec(DeploymentConfiguration deploymentConfiguration, string name, List<EnvVarArgs>? envVarArgsList)
+    private static DeploymentSpecArgs CreateDeploymentSpec(DeploymentConfiguration deploymentConfiguration, string defaultSelectorValue, List<EnvVarArgs>? envVarArgsList)
         => new()
         {
             Replicas = deploymentConfiguration.Replicas,
@@ -59,20 +58,20 @@ public sealed class DeploymentResource : ComponentResource
             {
                 MatchLabels =
                 {
-                    { DefaultLabel, name },
+                    { KubernetesLiterals.DefaultSelectorKey, defaultSelectorValue },
                 },
             },
-            Template = CreatePodTemplate(deploymentConfiguration, name, envVarArgsList),
+            Template = CreatePodTemplate(deploymentConfiguration, defaultSelectorValue, envVarArgsList),
         };
 
-    private static PodTemplateSpecArgs CreatePodTemplate(DeploymentConfiguration deploymentConfiguration, string name, List<EnvVarArgs>? envVarArgsList)
+    private static PodTemplateSpecArgs CreatePodTemplate(DeploymentConfiguration deploymentConfiguration, string defaultSelectorValue, List<EnvVarArgs>? envVarArgsList)
         => new()
         {
             Metadata = new ObjectMetaArgs
             {
                 Labels =
                 {
-                    { DefaultLabel, name },
+                    { KubernetesLiterals.DefaultSelectorKey, defaultSelectorValue },
                 },
             },
             Spec = new PodSpecArgs
