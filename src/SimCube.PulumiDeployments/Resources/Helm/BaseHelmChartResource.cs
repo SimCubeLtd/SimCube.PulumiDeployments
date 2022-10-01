@@ -28,23 +28,16 @@ public abstract class BaseHelmChartResource : ComponentResource
 
     protected static string RenderCommandName(string chartName) => $"render-values-{chartName}";
 
-    protected Command RenderYamlValues(string commandName, string helmFile, InputMap<string> environment)
-    {
-        var createCommand = new Command(
-            commandName,
-            new()
-            {
-                Create = RenderCreateCommand(helmFile),
-                Environment = environment,
-            },
-            CustomResourceOptions);
-
-        CustomResourceOptions.DependsOn.Add(createCommand);
-
-        return createCommand;
-    }
+    protected static void RenderYamlValues(string helmFile, Dictionary<string, string?> environment) =>
+        Cli.Wrap(EnvSubstitute)
+            .WithArguments($"< {helmFile} > {helmFile}.new && mv {helmFile}.new {helmFile}")
+            .WithEnvironmentVariables(environment)
+            .WithValidation(CommandResultValidation.ZeroExitCode)
+            .ExecuteAsync()
+            .GetAwaiter()
+            .GetResult();
 
     protected string GetHelmValuesFilePath() => Path.Combine(AppContext.BaseDirectory, HelmValuesFolder, HelmValuesFile);
 
-    private static string RenderCreateCommand(string helmValuePath) => $"{EnvSubstitute} < {helmValuePath} > {helmValuePath}.new && mv {helmValuePath}.new {helmValuePath}";
+    private static string RenderCreateCommand(string helmValuePath) => $"{EnvSubstitute} ";
 }

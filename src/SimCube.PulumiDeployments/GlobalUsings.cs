@@ -21,3 +21,5 @@ global using SimCube.PulumiDeployments.Helpers;
 global using SimCube.PulumiDeployments.Literals;
 global using SimCube.PulumiDeployments.Resources.Helm;
 global using SimCube.PulumiDeployments.Resources.Kubernetes;
+global using CliWrap;
+global using CliWrap.Buffered;
