@@ -6,7 +6,6 @@ global using System.Text;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using Ardalis.GuardClauses;
-global using CliWrap;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using Pulumi;
