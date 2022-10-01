@@ -7,7 +7,8 @@ public abstract class BaseHelmChartResource : ComponentResource
 {
     protected readonly CustomResourceOptions CustomResourceOptions;
 
-    private const string EnvSubstitute = "envsubst";
+    private const string EnvSubstituteCommand = "envsubst";
+    private const string MoveCommand = "mv";
     public const string HelmValuesFolder = "HelmValues";
 
     protected BaseHelmChartResource(
@@ -26,18 +27,28 @@ public abstract class BaseHelmChartResource : ComponentResource
 
     protected abstract string HelmValuesFile { get; }
 
-    protected static string RenderCommandName(string chartName) => $"render-values-{chartName}";
+    protected string RenderYamlValues(Dictionary<string, string?> environmentalVariables)
+    {
+        var helmValuesFile = GetHelmValuesFilePath();
 
-    protected static void RenderYamlValues(string helmFile, Dictionary<string, string?> environment) =>
-        Cli.Wrap(EnvSubstitute)
-            .WithArguments($"< {helmFile} > {helmFile}.new && mv {helmFile}.new {helmFile}")
-            .WithEnvironmentVariables(environment)
+        Cli.Wrap(EnvSubstituteCommand)
+            .WithArguments($"< {helmValuesFile} > {helmValuesFile}.new")
+            .WithEnvironmentVariables(environmentalVariables)
             .WithValidation(CommandResultValidation.ZeroExitCode)
             .ExecuteAsync()
             .GetAwaiter()
             .GetResult();
 
-    protected string GetHelmValuesFilePath() => Path.Combine(AppContext.BaseDirectory, HelmValuesFolder, HelmValuesFile);
+        Cli.Wrap(MoveCommand)
+            .WithArguments($"{helmValuesFile}.new {helmValuesFile}")
+            .WithEnvironmentVariables(environmentalVariables)
+            .WithValidation(CommandResultValidation.ZeroExitCode)
+            .ExecuteAsync()
+            .GetAwaiter()
+            .GetResult();
 
-    private static string RenderCreateCommand(string helmValuePath) => $"{EnvSubstitute} ";
+        return helmValuesFile;
+    }
+
+    private string GetHelmValuesFilePath() => Path.Combine(AppContext.BaseDirectory, HelmValuesFolder, HelmValuesFile);
 }
