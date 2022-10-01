@@ -6,9 +6,6 @@
 public abstract class BaseHelmChartResource : ComponentResource
 {
     protected readonly CustomResourceOptions CustomResourceOptions;
-
-    private const string EnvSubstituteCommand = "envsubst";
-    private const string MoveCommand = "mv";
     public const string HelmValuesFolder = "HelmValues";
 
     protected BaseHelmChartResource(
@@ -31,21 +28,15 @@ public abstract class BaseHelmChartResource : ComponentResource
     {
         var helmValuesFile = GetHelmValuesFilePath();
 
-        Cli.Wrap(EnvSubstituteCommand)
-            .WithArguments($"< {helmValuesFile} > {helmValuesFile}.new")
-            .WithEnvironmentVariables(environmentalVariables)
-            .WithValidation(CommandResultValidation.ZeroExitCode)
-            .ExecuteAsync()
-            .GetAwaiter()
-            .GetResult();
+        foreach (var environmentalVariable in environmentalVariables)
+        {
+            Environment.SetEnvironmentVariable(environmentalVariable.Key, environmentalVariable.Value);
+        }
 
-        Cli.Wrap(MoveCommand)
-            .WithArguments($"{helmValuesFile}.new {helmValuesFile}")
-            .WithEnvironmentVariables(environmentalVariables)
-            .WithValidation(CommandResultValidation.ZeroExitCode)
-            .ExecuteAsync()
-            .GetAwaiter()
-            .GetResult();
+        var origin = File.ReadAllText(helmValuesFile);
+        var output = Environment.ExpandEnvironmentVariables(origin);
+
+        File.WriteAllText(helmValuesFile, output);
 
         return helmValuesFile;
     }
