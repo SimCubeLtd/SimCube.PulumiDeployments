@@ -1,4 +1,7 @@
-﻿namespace SimCube.PulumiDeployments.Resources.Helm;
+﻿using Pulumi.Kubernetes.Helm.V3;
+using Pulumi.Kubernetes.Types.Inputs.Helm.V3;
+
+namespace SimCube.PulumiDeployments.Resources.Helm;
 
 [SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "I Want them.")]
 [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "I Want them.")]
@@ -23,6 +26,7 @@ public abstract class BaseHelmChartResource : ComponentResource
         };
 
     protected abstract string HelmValuesFile { get; }
+    protected abstract string ChartName { get; }
 
     protected string RenderYamlValues(Dictionary<string, string?> environmentalVariables)
     {
@@ -40,6 +44,33 @@ public abstract class BaseHelmChartResource : ComponentResource
 
         return helmValuesFile;
     }
+
+    protected Release CreateRelease(
+        NamespaceResource @namespace,
+        string helmChartName,
+        string helmRepository,
+        string? helmChartVersion = null,
+        bool waitForJobs = true,
+        bool skipAwait = false,
+        int timeout = 1200,
+        List<FileAsset>? helmValuesFiles = null) =>
+        new(
+            ChartName,
+            new()
+            {
+                Namespace = @namespace.NamespaceName,
+                Chart = helmChartName,
+                Version = helmChartVersion ?? string.Empty,
+                WaitForJobs = waitForJobs,
+                SkipAwait = skipAwait,
+                Timeout = timeout,
+                RepositoryOpts = new RepositoryOptsArgs
+                {
+                    Repo = helmRepository,
+                },
+                ValueYamlFiles = new List<AssetOrArchive>(helmValuesFiles ?? new List<FileAsset>()),
+            },
+            CustomResourceOptions);
 
     private string GetHelmValuesFilePath() => Path.Combine(AppContext.BaseDirectory, HelmValuesFolder, HelmValuesFile);
 }
