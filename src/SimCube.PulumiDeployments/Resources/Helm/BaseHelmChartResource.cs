@@ -28,7 +28,7 @@ public abstract class BaseHelmChartResource : ComponentResource
     protected abstract string HelmValuesFile { get; }
     protected abstract string ChartName { get; }
 
-    protected string RenderYamlValues(Dictionary<string, string?> environmentalVariables)
+    protected List<FileAsset> RenderYamlValues(Dictionary<string, string?> environmentalVariables)
     {
         var helmValuesFile = GetHelmValuesFilePath();
 
@@ -42,7 +42,10 @@ public abstract class BaseHelmChartResource : ComponentResource
 
         File.WriteAllText(helmValuesFile, output);
 
-        return helmValuesFile;
+        return new()
+        {
+            new(helmValuesFile),
+        };
     }
 
     protected Release CreateRelease(
@@ -50,10 +53,10 @@ public abstract class BaseHelmChartResource : ComponentResource
         string helmChartName,
         string helmRepository,
         string? helmChartVersion = null,
+        List<FileAsset>? helmValuesFiles = null,
         bool waitForJobs = true,
         bool skipAwait = false,
-        int timeout = 1200,
-        List<FileAsset>? helmValuesFiles = null) =>
+        int timeout = 1200) =>
         new(
             ChartName,
             new()
