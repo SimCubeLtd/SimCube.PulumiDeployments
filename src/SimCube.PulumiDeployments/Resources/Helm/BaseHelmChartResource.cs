@@ -26,7 +26,6 @@ public abstract class BaseHelmChartResource : ComponentResource
         };
 
     protected abstract string HelmValuesFile { get; }
-    protected abstract string ChartName { get; }
 
     protected List<FileAsset> RenderYamlValues(Dictionary<string, string?> environmentalVariables)
     {
@@ -50,6 +49,7 @@ public abstract class BaseHelmChartResource : ComponentResource
 
     protected Release CreateRelease(
         NamespaceResource @namespace,
+        string chartName,
         string helmChartName,
         string helmRepository,
         string? helmChartVersion = null,
@@ -58,7 +58,7 @@ public abstract class BaseHelmChartResource : ComponentResource
         bool skipAwait = false,
         int timeout = 1200) =>
         new(
-            ChartName,
+            chartName,
             new()
             {
                 Namespace = @namespace.NamespaceName,
