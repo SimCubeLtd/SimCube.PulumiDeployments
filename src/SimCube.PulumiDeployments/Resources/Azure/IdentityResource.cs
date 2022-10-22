@@ -14,8 +14,8 @@ public sealed class IdentityResource : BaseAzureResource<IdentityResource, Ident
         var azureActiveDirectoryTags = args.Configuration.GetAzureActiveDirectoryTags();
         var azureActiveDirectoryDescription = args.Configuration.GetAzureActiveDirectoryDescription();
 
-        var adAppName = args.Configuration.ApplicationName;
-        var adServicePrincipalName = $"{args.Configuration.ApplicationName}-{ResourceNames.ServicePrincipal}";
+        var adAppName = args.ApplicationName;
+        var adServicePrincipalName = $"{args.ApplicationName}-{ResourceNames.ServicePrincipal}";
         var adServicePrincipalPasswordName = $"{adServicePrincipalName}-password";
 
         var application = new Application(
@@ -23,7 +23,7 @@ public sealed class IdentityResource : BaseAzureResource<IdentityResource, Ident
             new()
             {
                 DisplayName = adAppName,
-                SupportUrl = args.Configuration.SupportAddress,
+                SupportUrl = args.SupportAddress ?? string.Empty,
                 Tags = azureActiveDirectoryTags,
             });
 

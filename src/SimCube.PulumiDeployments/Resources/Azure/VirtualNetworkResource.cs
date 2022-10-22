@@ -12,45 +12,15 @@ public sealed class VirtualNetworkResource : BaseAzureResource<VirtualNetworkRes
         ComponentResourceOptions? options = null)
         : base(name, args, options)
     {
-        var vnetName = $"{args.Configuration.ApplicationName}-{ResourceNames.VirtualNetwork}-{args.Location}-{args.Configuration.Environment}";
-        var subnetName = $"{args.Configuration.ApplicationName}-{ResourceNames.Subnet}-{args.Location}-{args.Configuration.Environment}";
-        var publicIpName = $"{args.Configuration.ApplicationName}-{ResourceNames.PublicIpAddress}-{args.Location}-{args.Configuration.Environment}";
+        var vnetName = $"{args.ApplicationName}-{ResourceNames.VirtualNetwork}-{args.Location}-{args.Environment}";
+        var subnetName = $"{args.ApplicationName}-{ResourceNames.Subnet}-{args.Location}-{args.Environment}";
+        var publicIpName = $"{args.ApplicationName}-{ResourceNames.PublicIpAddress}-{args.Location}-{args.Environment}";
 
-        Network = new(
-            vnetName,
-            new()
-            {
-                VirtualNetworkName = vnetName,
-                AddressSpace = new AddressSpaceArgs()
-                {
-                    AddressPrefixes =
-                    {
-                        args.Configuration.VirtualNetwork.AddressPrefix,
-                    },
-                },
-                Location = args.Location,
-                ResourceGroupName = args.ResourceGroup.Name,
-                Tags = GetResourceTags,
-            });
+        Network = CreateNetwork(args, vnetName);
 
-        Subnet = new(
-            subnetName,
-            new()
-            {
-                SubnetName = subnetName,
-                AddressPrefix = args.Configuration.VirtualNetwork.AddressPrefix,
-                ResourceGroupName = args.ResourceGroup.Name,
-                VirtualNetworkName = vnetName,
-            },
-            new()
-            {
-                DependsOn = new()
-                {
-                    Network,
-                },
-            });
+        Subnet = CreateSubnet(args, subnetName, vnetName);
 
-        if (args.Configuration.VirtualNetwork.IncludePublicIp)
+        if (args.IncludePublicIp == true)
         {
             PublicIp = new(
                 publicIpName,
@@ -65,6 +35,41 @@ public sealed class VirtualNetworkResource : BaseAzureResource<VirtualNetworkRes
 
         RegisterOutputs();
     }
+
+    private Subnet CreateSubnet(VNetArgs args, string subnetName, string vnetName) =>
+        new(
+            subnetName,
+            new()
+            {
+                SubnetName = subnetName,
+                AddressPrefix = args.AddressPrefix ?? string.Empty,
+                ResourceGroupName = args.ResourceGroup.Name,
+                VirtualNetworkName = vnetName,
+            },
+            new()
+            {
+                DependsOn = new()
+                {
+                    Network,
+                },
+            });
+
+    private VirtualNetwork CreateNetwork(VNetArgs args, string vnetName) =>
+        new(
+            vnetName,
+            new()
+            {
+                VirtualNetworkName = vnetName,
+                AddressSpace = new AddressSpaceArgs() {
+                    AddressPrefixes =
+                    {
+                        args.AddressPrefix ?? string.Empty,
+                    },
+                },
+                Location = args.Location,
+                ResourceGroupName = args.ResourceGroup.Name,
+                Tags = GetResourceTags,
+            });
 
     public VirtualNetwork Network { get; }
 
