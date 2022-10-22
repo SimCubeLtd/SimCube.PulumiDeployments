@@ -18,8 +18,8 @@ public sealed class StorageResource : BaseAzureResource<StorageResource, Storage
             args,
             options)
     {
-        var storageAccountName = $"{ResourceNames.StorageAccount}-{args.Location}-{args.Configuration.Environment}";
-        var storageQueueName = $"{ResourceNames.StorageQueue}-{args.Location}-{args.Configuration.Environment}";
+        var storageAccountName = $"{ResourceNames.StorageAccount}-{args.Location}-{args.Environment}";
+        var storageQueueName = $"{ResourceNames.StorageQueue}-{args.Location}-{args.Environment}";
 
         var storageAccount = new StorageAccount(
             storageAccountName,
@@ -76,7 +76,7 @@ public sealed class StorageResource : BaseAzureResource<StorageResource, Storage
                     {
                         new VirtualNetworkRuleArgs
                         {
-                            VirtualNetworkResourceId = args.VNet.Network.Id,
+                            VirtualNetworkResourceId = args.VNet is null ? string.Empty : args.VNet.Subnet.Id,
                         },
                     },
                 },

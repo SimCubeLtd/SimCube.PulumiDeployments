@@ -20,5 +20,6 @@ global using SimCube.PulumiDeployments.Configuration;
 global using SimCube.PulumiDeployments.Extensions;
 global using SimCube.PulumiDeployments.Helpers;
 global using SimCube.PulumiDeployments.Literals;
+global using SimCube.PulumiDeployments.Resources.Azure;
 global using SimCube.PulumiDeployments.Resources.Helm;
 global using SimCube.PulumiDeployments.Resources.Kubernetes;

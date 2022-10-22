@@ -1,3 +1,4 @@
+using SimCube.PulumiDeployments.Arguments.Azure;
 using SimCube.PulumiDeployments.Configuration.Azure;
 
 namespace SimCube.PulumiDeployments.Extensions;
@@ -5,7 +6,7 @@ namespace SimCube.PulumiDeployments.Extensions;
 [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "Pulumi deployment, not shippable")]
 public static class ConfigurationExtensions
 {
-    public static T GetFromJson<T>(this Config config, string key)
+    public static T GetRequiredFromJson<T>(this Config config, string key)
     {
         Guard.Against.Null(config, nameof(config));
         Guard.Against.Null(config, nameof(key));
@@ -13,6 +14,17 @@ public static class ConfigurationExtensions
         var options = new JsonSerializerOptions();
         options.Converters.Add(new JsonStringEnumConverter());
         return config.RequireObject<JsonElement>(key).Deserialize<T>(options)!;
+    }
+
+    public static T? GetOptionalFromJson<T>(this Config config, string key) where T : class
+    {
+        Guard.Against.Null(config, nameof(config));
+        Guard.Against.Null(config, nameof(key));
+
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonStringEnumConverter());
+
+        return config.GetObject<JsonElement?>(key)?.Deserialize<T>(options);
     }
 
     public static string GetString(this Config config, string key)
@@ -88,6 +100,32 @@ public static class ConfigurationExtensions
     /// <returns>A dictionary containing all the tags on the resource.</returns>
     public static Dictionary<string, string> GetTags(
         this BaseAzureConfiguration configuration,
+        string location)
+    {
+        Guard.Against.Null(configuration, nameof(configuration));
+
+        return new()
+        {
+            {
+                TagName.Application, configuration.ApplicationName
+            },
+            {
+                TagName.Environment, configuration.Environment
+            },
+            {
+                TagName.Location, location
+            },
+        };
+    }
+
+    /// <summary>
+    /// Gets the Azure Active directory tags.
+    /// </summary>
+    /// <param name="configuration">The configuration instance <see cref="BaseAzureConfiguration"/>.</param>
+    /// <param name="location">The location as a string.</param>
+    /// <returns>A dictionary containing all the tags on the resource.</returns>
+    public static Dictionary<string, string> GetTags(
+        this BaseAzureResourceArgs configuration,
         string location)
     {
         Guard.Against.Null(configuration, nameof(configuration));

@@ -16,8 +16,8 @@ public class ResourceGroupResource : BaseAzureResource<ResourceGroupResource, Re
             new()
             {
                 Location = args.Location,
-                ResourceGroupName = $"{args.Configuration.ApplicationName}-{args.Location}-{args.Configuration.Environment}",
-                Tags = args.Configuration.GetTags(args.Location),
+                ResourceGroupName = $"{args.ApplicationName}-{args.Location}-{args.Environment}",
+                Tags = args.GetTags(args.Location),
             },
             resourceOptions);
 

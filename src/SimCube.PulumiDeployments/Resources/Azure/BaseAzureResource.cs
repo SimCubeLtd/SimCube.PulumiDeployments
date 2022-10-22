@@ -14,14 +14,14 @@ public abstract class BaseAzureResource<TType, TArgs> : ComponentResource
         : base(GetType(args), GetName(name, args), options) =>
         _args = args;
 
-    protected Dictionary<string, string> GetResourceTags => _args.Configuration.GetTags(_args.Location);
+    protected Dictionary<string, string> GetResourceTags => _args.GetTags(_args.Location);
 
-    private static string GetType(TArgs args) => $"{args.Configuration.ApplicationName}:{typeof(TType).Name}";
+    private static string GetType(TArgs args) => $"{args.ApplicationName}:{typeof(TType).Name}";
 
     private static string GetName(
         string name,
         TArgs args) =>
-        $"{name}-{GetTypeName()}-{(string.IsNullOrEmpty(args.Location) ? string.Empty : $"{args.Location}-")}{args.Configuration.Environment}";
+        $"{name}-{GetTypeName()}-{(string.IsNullOrEmpty(args.Location) ? string.Empty : $"{args.Location}-")}{args.Environment}";
 
     private static string GetTypeName() => typeof(TType).Name.ToLowerInvariant().Replace("Resource", string.Empty, StringComparison.Ordinal);
 }

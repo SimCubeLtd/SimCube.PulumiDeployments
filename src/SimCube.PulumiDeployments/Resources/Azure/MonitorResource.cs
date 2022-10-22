@@ -12,7 +12,7 @@ public sealed class MonitorResource : BaseAzureResource<MonitorResource, Monitor
         ComponentResourceOptions? options = null)
         : base(name, args, options)
     {
-        var workspaceName = $"{args.Configuration.ApplicationName}-{ResourceNames.Workspace}-{args.Location}-{args.Configuration.Environment}";
+        var workspaceName = $"{args.ApplicationName}-{ResourceNames.Workspace}-{args.Location}-{args.Environment}";
 
         var workspace = new Workspace(
             workspaceName,
