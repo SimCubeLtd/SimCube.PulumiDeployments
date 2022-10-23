@@ -1,5 +1,4 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
-using SimCube.PulumiDeployments.Arguments.Azure;
 
 namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql;
 
