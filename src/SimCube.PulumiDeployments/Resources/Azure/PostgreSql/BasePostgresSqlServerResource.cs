@@ -1,4 +1,5 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
+using Pulumi.AzureNative.DBforPostgreSQL.Inputs;
 
 namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql;
 
@@ -7,82 +8,91 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
     protected BasePostgresSqlServerResource(string name, PostgresServerResourceArgs args, ComponentResourceOptions? options = null) :
         base(name, args, options)
     {
-        ServerName = $"{args.ApplicationName}-{ResourceNames.PostgresServer}-{args.Location}-{args.Environment}";
-        _vnetRuleName = $"{ResourceNames.PostgresServer}-{ResourceNames.VirtualNetworkRule}-{args.Location}-{args.Environment}";
+        Args = args;
+        var serverName = $"{args.ApplicationName}-{ResourceNames.PostgresServer}-{args.Location}-{args.Environment}";
+        var vnetRuleName = $"{ResourceNames.PostgresServer}-{ResourceNames.VirtualNetworkRule}-{args.Location}-{args.Environment}";
         Username = args.Username ?? $"{args.ApplicationName}-Admin";
 
-        var randomPasswordName = $"{ServerName}-password";
+        var randomPasswordName = $"{serverName}-password";
         AdminPassword = RandomPasswordResource.Create(new(randomPasswordName));
+
+        Server = new(
+            serverName,
+            new()
+            {
+                ServerName = serverName,
+                Location = args.Location,
+                Properties = new ServerPropertiesForDefaultCreateArgs
+                {
+                    AdministratorLogin = Username,
+                    AdministratorLoginPassword = AdminPassword.Result,
+                    CreateMode = CreateMode.Default.ToString(),
+                    MinimalTlsVersion = MinimalTlsVersionEnum.TLS1_2,
+                    SslEnforcement = SslEnforcementEnum.Enabled,
+                    StorageProfile = new StorageProfileArgs
+                    {
+                        BackupRetentionDays = args.ServerBackupRetentionDays,
+                        GeoRedundantBackup = args.ServerGeoRedundantBackup ? GeoRedundantBackup.Enabled : GeoRedundantBackup.Disabled,
+                        StorageMB = args.ServerStorageProfile,
+                    },
+                    PublicNetworkAccess = PublicNetworkAccessEnum.Enabled,
+                    Version = args.ServerVersion,
+                },
+                ResourceGroupName = args.ResourceGroup.Name,
+                Sku = SkuArgs,
+                Tags = GetResourceTags,
+            });
+
+        if (args.VNet != null)
+        {
+            VNetIntegrationRule = new(
+                vnetRuleName,
+                new()
+                {
+                    ServerName = serverName,
+                    ResourceGroupName = args.ResourceGroup.Name,
+                    VirtualNetworkRuleName = vnetRuleName,
+                    VirtualNetworkSubnetId = args.VNet!.Subnet.Id,
+                    IgnoreMissingVnetServiceEndpoint = true,
+                },
+                new() {DependsOn = new() {Server!,},});
+        }
+
+        if (args.ShouldCreateFirewallRules && args.FirewallAllowedIpAddresses.Count > 0)
+        {
+            FirewallRules = new();
+
+            foreach (var allowedIpAddress in args.FirewallAllowedIpAddresses)
+            {
+                var ruleName = GetFirewallRuleName(serverName, allowedIpAddress.Key);
+
+                FirewallRules.Add(
+                    new(
+                        ruleName,
+                        new()
+                        {
+                            ResourceGroupName = args.ResourceGroup.Name,
+                            ServerName = serverName,
+                            StartIpAddress = allowedIpAddress.Value,
+                            EndIpAddress = allowedIpAddress.Value,
+                            FirewallRuleName = allowedIpAddress.Key,
+                        }));
+            }
+        }
+
+        RegisterOutputs();
     }
-
-    protected void Initialise(PostgresServerResourceArgs args)
-    {
-        CreateServer(args);
-        CreateVNetIntegrationRule(args);
-        CreateFirewallRules(args);
-    }
-
-    private readonly string _vnetRuleName;
-
-    protected readonly string ServerName;
 
     public string Username { get; }
-    public Server? Server { get; init; }
-
-    public VirtualNetworkRule? VNetIntegrationRule { get; private set; }
+    public Server? Server { get; }
+    public VirtualNetworkRule? VNetIntegrationRule { get; }
     public RandomPasswordResource? AdminPassword { get; }
-    public List<FirewallRule>? FirewallRules { get; private set; }
+    public List<FirewallRule>? FirewallRules { get; }
+
+    protected readonly PostgresServerResourceArgs Args;
+    protected abstract SkuArgs SkuArgs { get; }
 
     public abstract Output<string> GetConnectionString(PostgresDatabaseResource databaseResource);
 
-    protected abstract Server CreateServer(PostgresServerResourceArgs args);
-
-    private void CreateVNetIntegrationRule(PostgresServerResourceArgs args)
-    {
-        if (args.VNet == null)
-        {
-            return;
-        }
-
-        VNetIntegrationRule = new(
-            _vnetRuleName,
-            new()
-            {
-                ServerName = ServerName,
-                ResourceGroupName = args.ResourceGroup.Name,
-                VirtualNetworkRuleName = _vnetRuleName,
-                VirtualNetworkSubnetId = args.VNet!.Subnet.Id,
-                IgnoreMissingVnetServiceEndpoint = true,
-            },
-            new() {DependsOn = new() {Server!,},});
-    }
-
-    private void CreateFirewallRules(PostgresServerResourceArgs args)
-    {
-        if (!args.FirewallAllowedIpAddresses.Any() || !args.FirewallAllowedIpAddresses.Any())
-        {
-            return;
-        }
-
-        FirewallRules = new List<FirewallRule>();
-
-        foreach (var allowedIpAddress in args.FirewallAllowedIpAddresses)
-        {
-            var name = GetFirewallRuleName(allowedIpAddress.Key);
-
-            FirewallRules.Add(
-                new(
-                    name,
-                    new()
-                    {
-                        ResourceGroupName = args.ResourceGroup.Name,
-                        ServerName = ServerName,
-                        StartIpAddress = allowedIpAddress.Value,
-                        EndIpAddress = allowedIpAddress.Value,
-                        FirewallRuleName = allowedIpAddress.Key,
-                    }));
-        }
-    }
-
-    private string GetFirewallRuleName(string name) => $"{ServerName}-{ResourceNames.FirewallRule}-{name}";
+    private static string GetFirewallRuleName(string serverName, string name) => $"{serverName}-{ResourceNames.FirewallRule}-{name}";
 }
