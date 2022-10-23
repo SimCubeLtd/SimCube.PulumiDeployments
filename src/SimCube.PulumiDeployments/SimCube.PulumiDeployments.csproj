@@ -20,6 +20,7 @@
     <PackageReference Include="Pulumi.Kubernetes" Version="3.22.0" />
     <PackageReference Include="Pulumi.Command" Version="4.5.0" />
     <PackageReference Include="Pulumi.AzureNative" Version="1.82.0" />
+    <PackageReference Include="Pulumi.Random" Version="4.8.2" />
   </ItemGroup>
 
   <ItemGroup>

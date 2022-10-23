@@ -1,17 +1,19 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
 using SimCube.PulumiDeployments.Arguments.Azure;
 
-namespace SimCube.PulumiDeployments.Resources.Azure;
+namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql;
 
-public sealed class PostgresInstanceDatabaseResource : BaseAzureResource<PostgresInstanceDatabaseResource, PostgresDatabaseResourceArgs>
+public sealed class PostgresDatabaseResource : BaseAzureResource<PostgresDatabaseResource, PostgresDatabaseResourceArgs>
 {
-    public PostgresInstanceDatabaseResource(
+    public PostgresDatabaseResource(
         string name,
         PostgresDatabaseResourceArgs args,
         ComponentResourceOptions? options = null)
         : base(name, args, options)
     {
-        var postgresDatabaseName = $"{ResourceNames.PostgresDatabase}-{args.Location}-{args.Environment}";
+        ArgumentNullException.ThrowIfNull(args.ServerArgs.Server, nameof(args.ServerArgs.Server));
+
+        var postgresDatabaseName = args.DatabaseName ?? $"{ResourceNames.PostgresDatabase}-{args.Location}-{args.Environment}";
 
         Database = new(
             postgresDatabaseName,
@@ -35,15 +37,11 @@ public sealed class PostgresInstanceDatabaseResource : BaseAzureResource<Postgre
 
         RegisterOutputs();
     }
+
+    private Output<string> GetConnectionString(PostgresDatabaseResourceArgs args) =>
+        args.ServerArgs.GetConnectionString(this);
+
     public Database Database { get; }
 
-    public Output<string> ConnectionString { get; }
-
-    public static Output<string> GetConnectionString(PostgresDatabaseResourceArgs args)
-    {
-        ArgumentNullException.ThrowIfNull(args, nameof(args));
-
-        return Output.Format(
-            $"Host={args.ServerArgs.Server.FullyQualifiedDomainName};Database={args.DatabaseName};Username={args.Username}@{args.ServerArgs.Server.Name};Password={args.Password};Trust Server Certificate=True;SSL Mode=Require;");
-    }
+    public Output<string>? ConnectionString { get; }
 }
