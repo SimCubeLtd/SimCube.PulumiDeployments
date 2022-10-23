@@ -19,6 +19,8 @@ public static class ResourceNames
     public const string NetworkSecurityGroup = "nsg";
     public const string PublicIpAddress = "publicip";
     public const string PostgresServer = "pgres";
+    public const string FirewallRule = "fwRule";
+    public const string Password = "password";
     public const string PostgresDatabase = "pgdb";
     public const string PostgresDatabaseConfiguration = "pgdbconfig";
     public const string VirtualNetworkRule = "vnetrule";
