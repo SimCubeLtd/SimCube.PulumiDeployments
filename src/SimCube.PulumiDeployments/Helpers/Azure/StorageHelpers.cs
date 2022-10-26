@@ -1,5 +1,4 @@
-﻿using Pulumi.AzureNative.Resources;
-using Pulumi.AzureNative.Storage;
+﻿using Pulumi.AzureNative.Storage;
 
 namespace SimCube.PulumiDeployments.Helpers.Azure;
 
@@ -7,12 +6,12 @@ public static class StorageHelpers
 {
     public static Output<string> GetSignedBlobReadUrl(
         Blob blob,
-        BlobContainer container,
-        StorageAccount account,
-        ResourceGroup resourceGroup,
+        Output<string> container,
+        Output<string> account,
+        Output<string> resourceGroup,
         DateTime? sasStartTime = null,
         DateTime? sasEndTime = null) =>
-        Output.Tuple(blob.Name, container.Name, account.Name, resourceGroup.Name)
+        Output.Tuple(blob.Name, container, account, resourceGroup)
             .Apply(
                 t =>
                 {
