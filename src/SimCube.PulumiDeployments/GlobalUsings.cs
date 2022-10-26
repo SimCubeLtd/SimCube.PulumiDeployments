@@ -15,7 +15,6 @@ global using Pulumi.Kubernetes.Networking.V1;
 global using Pulumi.Kubernetes.Types.Inputs.Core.V1;
 global using Pulumi.Kubernetes.Types.Inputs.Meta.V1;
 global using Pulumi.Kubernetes.Types.Inputs.Networking.V1;
-global using SimCube.PulumiDeployments.Arguments;
 global using SimCube.PulumiDeployments.Arguments.Azure;
 global using SimCube.PulumiDeployments.Arguments.Azure.AppService;
 global using SimCube.PulumiDeployments.Arguments.Azure.PostgreSql;
