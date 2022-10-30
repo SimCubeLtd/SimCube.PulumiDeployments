@@ -1,11 +1,11 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
 using Pulumi.AzureNative.DBforPostgreSQL.Inputs;
 
-namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql;
+namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql.Instance;
 
-public sealed class PostgresServerResource : BasePostgresServerInstance
+public sealed class PostgresInstanceServerResource : BaseAzureResource<PostgresInstanceServerResource, PostgresInstanceServerResourceArgs>
 {
-    public PostgresServerResource(string name, PostgresServerResourceArgs args, ComponentResourceOptions? options = null) :
+    public PostgresInstanceServerResource(string name, PostgresInstanceServerResourceArgs args, ComponentResourceOptions? options = null) :
         base(name, args, options)
     {
         var serverName = $"{args.ApplicationName}-{ResourceNames.PostgresServer}-{args.Location}-{args.Environment}";
@@ -97,9 +97,17 @@ public sealed class PostgresServerResource : BasePostgresServerInstance
         RegisterOutputs();
     }
 
-    public override Output<string> GetConnectionString(PostgresDatabaseResource databaseResource) =>
+    public Output<string> GetConnectionString(PostgresInstanceDatabaseResource databaseResource) =>
         Output.Format(
             $"Host={ServerFqdn};Database={databaseResource.Database.Name};Username={Username}@{ServerName};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
+
+    public Output<string> Username { get; set; }
+    public Output<string> ServerName { get; set;}
+    public Output<string> ServerFqdn { get; set;}
+    public Output<string>? VNetIntegrationRuleId { get; set;}
+    public Output<string>? VNetIntegrationRuleName { get; set;}
+    public Output<string> AdminPassword { get; set;}
+    public List<Output<string>>? FirewallRuleIds { get; set;}
 
     private static string GetFirewallRuleName(string serverName, string name) => $"{serverName}-{ResourceNames.FirewallRule}-{name}";
 

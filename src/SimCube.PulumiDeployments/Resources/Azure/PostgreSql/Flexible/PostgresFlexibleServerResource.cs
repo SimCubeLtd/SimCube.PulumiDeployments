@@ -1,14 +1,15 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
 using Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview;
 using Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs;
+using SimCube.PulumiDeployments.Arguments.Azure.PostgreSql.Flexible;
 using CreateMode = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.CreateMode;
 using FirewallRule = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRule;
 
-namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql;
+namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql.Flexible;
 
-public sealed class PostgresFlexibleServerResource : BasePostgresServerInstance
+public sealed class PostgresFlexibleServerResource : BaseAzureResource<PostgresFlexibleServerResource, PostgresFlexibleServerResourceArgs>
 {
-    public PostgresFlexibleServerResource(string name, PostgresServerResourceArgs args, ComponentResourceOptions? options = null) :
+    public PostgresFlexibleServerResource(string name, PostgresFlexibleServerResourceArgs args, ComponentResourceOptions? options = null) :
         base(name, args, options)
     {
         var serverName = $"{args.ApplicationName}-{ResourceNames.PostgresServer}-{args.Location}-{args.Environment}";
@@ -89,7 +90,7 @@ public sealed class PostgresFlexibleServerResource : BasePostgresServerInstance
             FirewallRuleIds = firewallRules.Select(x => x.Id).ToList();
         }
 
-        ServerName = server.Name;
+        ServerName = Output.Create(serverName);
         AdminPassword = adminPassword.Result;
         ServerFqdn = server.FullyQualifiedDomainName;
 
@@ -98,9 +99,17 @@ public sealed class PostgresFlexibleServerResource : BasePostgresServerInstance
 
 
 
-    public override Output<string> GetConnectionString(PostgresDatabaseResource databaseResource) =>
+    public Output<string> GetConnectionString(PostgresFlexibleDatabaseResource databaseResource) =>
         Output.Format(
             $"Host={ServerFqdn};Database={databaseResource.Database.Name};Username={Username};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
+
+    public Output<string> Username { get; set; }
+    public Output<string> ServerName { get; set;}
+    public Output<string> ServerFqdn { get; set;}
+    public Output<string>? VNetIntegrationRuleId { get; set;}
+    public Output<string>? VNetIntegrationRuleName { get; set;}
+    public Output<string> AdminPassword { get; set;}
+    public List<Output<string>>? FirewallRuleIds { get; set;}
 
     private static string GetFirewallRuleName(string serverName, string name) => $"{serverName}-{ResourceNames.FirewallRule}-{name}";
 }
