@@ -11,7 +11,7 @@ public sealed class AppServicePlanResource : BaseAzureResource<AppServicePlanRes
         ComponentResourceOptions? options = null)
         : base(name, args, options)
     {
-        var defaultAppServicePlanName = $"{ResourceNames.AppServicePlan}-{args.Location}-{args.Configuration.Environment}";
+        var defaultAppServicePlanName = $"{ResourceNames.AppServicePlan}-{args.Location}-{args.Environment}";
 
         var appServicePlan = new AppServicePlan(
             args.ServicePlanName ?? defaultAppServicePlanName,
