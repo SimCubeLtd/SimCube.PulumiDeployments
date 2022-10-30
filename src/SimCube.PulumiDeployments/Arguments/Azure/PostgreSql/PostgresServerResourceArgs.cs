@@ -15,7 +15,8 @@ public record PostgresServerResourceArgs : BaseAzureResourceArgs
     public string ServerVersion { get; init; } = "14.0";
     public int ServerBackupRetentionDays { get; init; } = 7;
     public bool ServerGeoRedundantBackup { get; init; }
-    public int ServerStorageProfile { get; init; } = 32768;
+    public int ServerStorageMb { get; init; } = 5000;
+    public int ServerStorageGb { get; init; } = 32;
 
     public bool ShouldCreateFirewallRules { get; init; } = true;
     public Dictionary<string, string> FirewallAllowedIpAddresses { get; init; } = new();
