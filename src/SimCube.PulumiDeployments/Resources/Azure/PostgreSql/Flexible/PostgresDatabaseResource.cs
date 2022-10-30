@@ -26,7 +26,7 @@ public sealed class PostgresFlexibleDatabaseResource : BaseAzureResource<Postgre
             {
                 DependsOn =
                 {
-                    args.ServerArgs
+                    args.ServerArgs.FlexibleServer,
                 },
             });
 

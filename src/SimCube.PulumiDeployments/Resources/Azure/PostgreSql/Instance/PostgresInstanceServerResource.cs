@@ -1,5 +1,6 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
 using Pulumi.AzureNative.DBforPostgreSQL.Inputs;
+using InstanceServer = Pulumi.AzureNative.DBforPostgreSQL.Server;
 
 namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql.Instance;
 
@@ -15,7 +16,7 @@ public sealed class PostgresInstanceServerResource : BaseAzureResource<PostgresI
         var randomPasswordName = $"{serverName}-password";
         var adminPassword = RandomPasswordResource.Create(new(randomPasswordName));
 
-        var server = new Server(
+        InstanceServer = new(
             serverName,
             new()
             {
@@ -60,7 +61,7 @@ public sealed class PostgresInstanceServerResource : BaseAzureResource<PostgresI
                     VirtualNetworkSubnetId = args.VNet!.SubnetId,
                     IgnoreMissingVnetServiceEndpoint = true,
                 },
-                new() {DependsOn = new() {server,},});
+                new() {DependsOn = new() {InstanceServer,},});
 
             VNetIntegrationRuleId = vNetIntegrationRule.Id;
             VNetIntegrationRuleName = vNetIntegrationRule.Name;
@@ -90,9 +91,9 @@ public sealed class PostgresInstanceServerResource : BaseAzureResource<PostgresI
             FirewallRuleIds = firewallRules.Select(x => x.Id).ToList();
         }
 
-        ServerName = server.Name;
+        ServerName = InstanceServer.Name;
         AdminPassword = adminPassword.Result;
-        ServerFqdn = SetDomainName(server);
+        ServerFqdn = SetDomainName(InstanceServer);
 
         RegisterOutputs();
     }
@@ -100,6 +101,8 @@ public sealed class PostgresInstanceServerResource : BaseAzureResource<PostgresI
     public Output<string> GetConnectionString(PostgresInstanceDatabaseResource databaseResource) =>
         Output.Format(
             $"Host={ServerFqdn};Database={databaseResource.Database.Name};Username={Username}@{ServerName};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
+
+    public InstanceServer InstanceServer { get; }
 
     public Output<string> Username { get; set; }
     public Output<string> ServerName { get; set;}
