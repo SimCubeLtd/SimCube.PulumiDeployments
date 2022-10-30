@@ -18,8 +18,8 @@ public sealed class PostgresFlexibleDatabaseResource : BaseAzureResource<Postgre
             new()
             {
                 DatabaseName = DatabaseName,
-                Charset = "UTF8",
-                Collation = "English_United States.1252",
+                Charset = args.CharSet,
+                Collation = args.Collation,
                 ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ServerName = args.ServerArgs.ServerName,
             }, new()
