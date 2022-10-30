@@ -1,9 +1,9 @@
 ﻿using Pulumi.AzureNative.DBforPostgreSQL;
 
-namespace SimCube.PulumiDeployments.Arguments.Azure.PostgreSql;
+namespace SimCube.PulumiDeployments.Arguments.Azure.PostgreSql.Instance;
 
 [ExcludeFromCodeCoverage]
-public record PostgresServerResourceArgs : BaseAzureResourceArgs
+public record PostgresInstanceServerResourceArgs : BaseAzureResourceArgs
 {
     public VirtualNetworkResource? VNet { get; init; }
     public SkuTier SkuTier { get; init; }
@@ -16,7 +16,6 @@ public record PostgresServerResourceArgs : BaseAzureResourceArgs
     public int ServerBackupRetentionDays { get; init; } = 7;
     public bool ServerGeoRedundantBackup { get; init; }
     public int ServerStorageMb { get; init; } = 5000;
-    public int ServerStorageGb { get; init; } = 32;
 
     public bool ShouldCreateFirewallRules { get; init; } = true;
     public Dictionary<string, string> FirewallAllowedIpAddresses { get; init; } = new();
