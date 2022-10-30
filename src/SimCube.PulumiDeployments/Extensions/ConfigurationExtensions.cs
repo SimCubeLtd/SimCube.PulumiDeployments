@@ -1,5 +1,3 @@
-using SimCube.PulumiDeployments.Configuration.Azure;
-
 namespace SimCube.PulumiDeployments.Extensions;
 
 [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "Pulumi deployment, not shippable")]
@@ -65,62 +63,9 @@ public static class ConfigurationExtensions
     }
 
     /// <summary>
-    /// Gets the Azure Active directory description.
-    /// </summary>
-    /// <param name="configuration">The configuration instance <see cref="BaseAzureConfiguration"/>.</param>
-    /// <returns>The description as a string.</returns>
-    public static string GetAzureActiveDirectoryDescription(
-        this BaseAzureConfiguration configuration)
-    {
-        Guard.Against.Null(configuration, nameof(configuration));
-
-        return string.Join(Environment.NewLine, configuration.GetAzureActiveDirectoryTags());
-    }
-
-    /// <summary>
     /// Gets the Azure Active directory tags.
     /// </summary>
-    /// <param name="configuration">The configuration instance <see cref="BaseAzureConfiguration"/>.</param>
-    /// <returns>The Tags as a list of type string.</returns>
-    [SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "Pulumi requires List")]
-    public static List<string> GetAzureActiveDirectoryTags(
-        this BaseAzureConfiguration configuration)
-    {
-        Guard.Against.Null(configuration, nameof(configuration));
-
-        return configuration.GetTags("Azure Active Directory").Select(x => $"{x.Key}={x.Value}").ToList();
-    }
-
-    /// <summary>
-    /// Gets the Azure Active directory tags.
-    /// </summary>
-    /// <param name="configuration">The configuration instance <see cref="BaseAzureConfiguration"/>.</param>
-    /// <param name="location">The location as a string.</param>
-    /// <returns>A dictionary containing all the tags on the resource.</returns>
-    public static Dictionary<string, string> GetTags(
-        this BaseAzureConfiguration configuration,
-        string location)
-    {
-        Guard.Against.Null(configuration, nameof(configuration));
-
-        return new()
-        {
-            {
-                TagName.Application, configuration.ApplicationName
-            },
-            {
-                TagName.Environment, configuration.Environment
-            },
-            {
-                TagName.Location, location
-            },
-        };
-    }
-
-    /// <summary>
-    /// Gets the Azure Active directory tags.
-    /// </summary>
-    /// <param name="configuration">The configuration instance <see cref="BaseAzureConfiguration"/>.</param>
+    /// <param name="configuration">The configuration instance <see cref="BaseAzureResourceArgs"/>.</param>
     /// <param name="location">The location as a string.</param>
     /// <returns>A dictionary containing all the tags on the resource.</returns>
     public static Dictionary<string, string> GetTags(

@@ -10,7 +10,7 @@ public class ResourceGroupResource : BaseAzureResource<ResourceGroupResource, Re
         : base(name, args, options)
     {
         var resourceGroup = new Pulumi.AzureNative.Resources.ResourceGroup(
-            $"{args.Configuration.ApplicationName}-{args.Location}-{args.Configuration.Environment}",
+            $"{args.ApplicationName}-{args.Location}-{args.Environment}",
             new()
             {
                 Location = args.Location,
