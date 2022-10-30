@@ -1,4 +1,3 @@
-using SimCube.PulumiDeployments.Arguments.Azure;
 using SimCube.PulumiDeployments.Configuration.Azure;
 
 namespace SimCube.PulumiDeployments.Extensions;

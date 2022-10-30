@@ -21,5 +21,5 @@ public sealed class PostgresFlexibleServerResource : BasePostgresSqlServerResour
 
     public override Output<string> GetConnectionString(PostgresDatabaseResource databaseResource) =>
         Output.Format(
-            $"Host={Server?.FullyQualifiedDomainName};Database={databaseResource.Database.Name};Username={Username};Password={AdminPassword?.Result};Trust Server Certificate=True;SSL Mode=Require;");
+            $"Host={ServerFQDN};Database={databaseResource.Database.Name};Username={Username};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
 }

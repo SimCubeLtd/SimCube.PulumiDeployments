@@ -1,5 +1,4 @@
 ﻿using Pulumi.AzureAD;
-using SimCube.PulumiDeployments.Arguments.Azure;
 
 namespace SimCube.PulumiDeployments.Resources.Azure;
 
