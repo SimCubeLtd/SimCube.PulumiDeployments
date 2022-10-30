@@ -27,7 +27,7 @@ public sealed class RedisCacheResource : BaseAzureResource<RedisCacheResource, R
                         MaxmemoryPolicy = args.MaxMemoryPolicy,
                     },
                 ReplicasPerMaster = args.ReplicasPerMaster,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ShardCount = args.ShardCount,
                 Sku = new SkuArgs
                 {

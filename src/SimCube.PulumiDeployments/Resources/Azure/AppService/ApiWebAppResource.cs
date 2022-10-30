@@ -27,7 +27,7 @@ public sealed class ApiWebAppResource : BaseAzureResource<ApiWebAppResource, Api
             args.ApiName ?? defaultApiWebAppName,
             new()
             {
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ServerFarmId = args.AppServicePlan.AppServicePlanId,
                 Name = args.ApiName ?? defaultApiWebAppName,
                 SiteConfig = args.SiteConfig,

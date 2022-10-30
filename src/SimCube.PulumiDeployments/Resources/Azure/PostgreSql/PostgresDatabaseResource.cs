@@ -19,7 +19,7 @@ public sealed class PostgresDatabaseResource : BaseAzureResource<PostgresDatabas
                 DatabaseName = postgresDatabaseName,
                 Charset = "UTF8",
                 Collation = "English_United States.1252",
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ServerName = args.ServerArgs.ServerName,
             },
             new()

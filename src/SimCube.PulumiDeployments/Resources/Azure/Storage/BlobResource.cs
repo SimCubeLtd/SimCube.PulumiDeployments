@@ -22,12 +22,12 @@ public sealed class BlobResource : BaseAzureResource<BlobResource, BlobResourceA
             {
                 AccountName = args.Storage.StorageAccountName,
                 ContainerName = args.Container.BlobContainerName,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 Type = args.BlobType,
                 Source = args.FileArchive,
             });
 
-        BlobReadUrl = StorageHelpers.GetSignedBlobReadUrl(blob, args.Container.BlobContainerName, args.Storage.StorageAccountName, args.ResourceGroup.Name);
+        BlobReadUrl = StorageHelpers.GetSignedBlobReadUrl(blob, args.Container.BlobContainerName, args.Storage.StorageAccountName, args.ResourceGroup.ResourceGroupName);
 
         RegisterOutputs();
     }

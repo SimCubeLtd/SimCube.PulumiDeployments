@@ -1,7 +1,4 @@
-﻿using Pulumi.AzureNative.Resources;
-using SimCube.PulumiDeployments.Configuration.Azure;
-
-namespace SimCube.PulumiDeployments.Arguments.Azure;
+﻿namespace SimCube.PulumiDeployments.Arguments.Azure;
 
 public abstract record BaseAzureResourceArgs
 {
@@ -11,5 +8,5 @@ public abstract record BaseAzureResourceArgs
 
     public string? SupportAddress { get; init; }
 
-    public ResourceGroup ResourceGroup { get; init; } = default!;
+    public ResourceGroupResource ResourceGroup { get; init; } = default!;
 }

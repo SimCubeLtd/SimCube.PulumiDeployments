@@ -21,7 +21,7 @@ public sealed class QueueStorageResource : BaseAzureResource<QueueStorageResourc
             {
                 AccountName = args.BlobStorage.StorageAccountName,
                 QueueName = args.StorageQueueName ?? defaultStorageQueueName,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
             });
 
         StorageQueueId = storageQueue.Id;
