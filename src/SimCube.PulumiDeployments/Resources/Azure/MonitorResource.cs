@@ -19,7 +19,7 @@ public sealed class MonitorResource : BaseAzureResource<MonitorResource, Monitor
             {
                 WorkspaceName = workspaceName,
                 Location = args.Location,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 RetentionInDays = args.RetentionDays,
                 Sku = new WorkspaceSkuArgs
                 {

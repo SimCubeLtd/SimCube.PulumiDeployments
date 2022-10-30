@@ -38,7 +38,7 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
                     PublicNetworkAccess = PublicNetworkAccessEnum.Enabled,
                     Version = args.ServerVersion,
                 },
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 Sku = SkuArgs,
                 Tags = GetResourceTags,
             });
@@ -50,7 +50,7 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
                 new()
                 {
                     ServerName = serverName,
-                    ResourceGroupName = args.ResourceGroup.Name,
+                    ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                     VirtualNetworkRuleName = vnetRuleName,
                     VirtualNetworkSubnetId = args.VNet!.SubnetId,
                     IgnoreMissingVnetServiceEndpoint = true,
@@ -74,7 +74,7 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
                         ruleName,
                         new()
                         {
-                            ResourceGroupName = args.ResourceGroup.Name,
+                            ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                             ServerName = serverName,
                             StartIpAddress = allowedIpAddress.Value,
                             EndIpAddress = allowedIpAddress.Value,

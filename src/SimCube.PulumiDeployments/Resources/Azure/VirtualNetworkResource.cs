@@ -28,7 +28,7 @@ public sealed class VirtualNetworkResource : BaseAzureResource<VirtualNetworkRes
                 {
                     Location = args.Location,
                     PublicIpAddressName = publicIpName,
-                    ResourceGroupName = args.ResourceGroup.Name,
+                    ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                     Tags = GetResourceTags,
                 });
 
@@ -50,7 +50,7 @@ public sealed class VirtualNetworkResource : BaseAzureResource<VirtualNetworkRes
             {
                 SubnetName = subnetName,
                 AddressPrefix = args.AddressPrefix ?? string.Empty,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 VirtualNetworkName = vnetName,
             });
 
@@ -67,7 +67,7 @@ public sealed class VirtualNetworkResource : BaseAzureResource<VirtualNetworkRes
                     },
                 },
                 Location = args.Location,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 Tags = GetResourceTags,
             });
 

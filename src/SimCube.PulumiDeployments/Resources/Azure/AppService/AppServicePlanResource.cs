@@ -20,7 +20,7 @@ public sealed class AppServicePlanResource : BaseAzureResource<AppServicePlanRes
                 Kind = args.Kind,
                 Location = args.Location,
                 Name = args.ServicePlanName ?? defaultAppServicePlanName,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 Reserved = args.IsReserved,
                 Sku = args.Sku,
                 Tags = GetResourceTags,

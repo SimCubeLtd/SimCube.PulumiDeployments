@@ -22,7 +22,7 @@ public sealed class BlobContainerResource : BaseAzureResource<BlobContainerResou
             {
                 AccountName = args.BlobStorageResource.StorageAccountName,
                 PublicAccess = PublicAccess.None,
-                ResourceGroupName = args.ResourceGroup.Name,
+                ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ContainerName = args.ContainerName,
             });
 
