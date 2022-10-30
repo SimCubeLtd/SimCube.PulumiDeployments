@@ -1,6 +1,5 @@
 ﻿using Pulumi.AzureNative.Cache;
 using Pulumi.AzureNative.Cache.Inputs;
-using SimCube.PulumiDeployments.Arguments.Azure;
 
 namespace SimCube.PulumiDeployments.Resources.Azure;
 
@@ -36,7 +35,7 @@ public sealed class RedisCacheResource : BaseAzureResource<RedisCacheResource, R
                     Family = args.SkuFamily,
                     Name = args.SkuName,
                 },
-                SubnetId = args.VNet.Subnet.Id,
+                SubnetId = args.VNet.SubnetId,
                 PublicNetworkAccess = args.PublicNetworkAccess ? PublicNetworkAccess.Enabled : PublicNetworkAccess.Disabled,
                 Tags = GetResourceTags,
             });

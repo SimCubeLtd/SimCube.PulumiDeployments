@@ -1,6 +1,5 @@
 ﻿using Pulumi.AzureNative.OperationalInsights;
 using Pulumi.AzureNative.OperationalInsights.Inputs;
-using SimCube.PulumiDeployments.Arguments.Azure;
 
 namespace SimCube.PulumiDeployments.Resources.Azure;
 
@@ -21,18 +20,21 @@ public sealed class MonitorResource : BaseAzureResource<MonitorResource, Monitor
                 WorkspaceName = workspaceName,
                 Location = args.Location,
                 ResourceGroupName = args.ResourceGroup.Name,
-                RetentionInDays = 30,
-                Sku = new WorkspaceSkuArgs()
+                RetentionInDays = args.RetentionDays,
+                Sku = new WorkspaceSkuArgs
                 {
-                    Name = WorkspaceSkuNameEnum.PerGB2018,
+                    Name = args.Sku,
                 },
                 Tags = GetResourceTags,
             });
 
         WorkspaceId = workspace.Id;
+        WorkspaceName = workspace.Name;
 
         RegisterOutputs();
     }
 
     public Output<string> WorkspaceId { get; set; }
+
+    public Output<string> WorkspaceName { get; set; }
 }

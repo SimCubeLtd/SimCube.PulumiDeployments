@@ -1,6 +1,4 @@
-﻿using SimCube.PulumiDeployments.Arguments.Azure;
-
-namespace SimCube.PulumiDeployments.Resources.Azure;
+﻿namespace SimCube.PulumiDeployments.Resources.Azure;
 
 public class ResourceGroupResource : BaseAzureResource<ResourceGroupResource, ResourceGroupResourceArgs>
 {
@@ -22,9 +20,11 @@ public class ResourceGroupResource : BaseAzureResource<ResourceGroupResource, Re
             resourceOptions);
 
         ResourceGroupId = resourceGroup.Id;
+        ResourceGroupName = resourceGroup.Name;
 
         RegisterOutputs();
     }
 
     public Output<string> ResourceGroupId { get; }
+    public Output<string> ResourceGroupName { get; }
 }

@@ -1,6 +1,4 @@
-﻿using SimCube.PulumiDeployments.Arguments.Azure;
-
-namespace SimCube.PulumiDeployments.Resources.Azure;
+﻿namespace SimCube.PulumiDeployments.Resources.Azure;
 
 public abstract class BaseAzureResource<TType, TArgs> : ComponentResource
     where TArgs : BaseAzureResourceArgs

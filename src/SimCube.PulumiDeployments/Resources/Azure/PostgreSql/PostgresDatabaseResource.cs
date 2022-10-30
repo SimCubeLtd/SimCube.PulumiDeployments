@@ -10,8 +10,6 @@ public sealed class PostgresDatabaseResource : BaseAzureResource<PostgresDatabas
         ComponentResourceOptions? options = null)
         : base(name, args, options)
     {
-        ArgumentNullException.ThrowIfNull(args.ServerArgs.Server, nameof(args.ServerArgs.Server));
-
         var postgresDatabaseName = args.DatabaseName ?? $"{ResourceNames.PostgresDatabase}-{args.Location}-{args.Environment}";
 
         Database = new(
@@ -22,7 +20,7 @@ public sealed class PostgresDatabaseResource : BaseAzureResource<PostgresDatabas
                 Charset = "UTF8",
                 Collation = "English_United States.1252",
                 ResourceGroupName = args.ResourceGroup.Name,
-                ServerName = args.ServerArgs.Server.Name,
+                ServerName = args.ServerArgs.ServerName,
             },
             new()
             {

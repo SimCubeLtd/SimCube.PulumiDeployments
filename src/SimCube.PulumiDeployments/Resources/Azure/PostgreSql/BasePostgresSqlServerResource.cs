@@ -11,12 +11,12 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
         Args = args;
         var serverName = $"{args.ApplicationName}-{ResourceNames.PostgresServer}-{args.Location}-{args.Environment}";
         var vnetRuleName = $"{ResourceNames.PostgresServer}-{ResourceNames.VirtualNetworkRule}-{args.Location}-{args.Environment}";
-        Username = args.Username ?? $"{args.ApplicationName}-Admin";
+        Username = Output<string>.Create(Task.FromResult(args.Username ?? $"{args.ApplicationName}-Admin"));
 
         var randomPasswordName = $"{serverName}-password";
-        AdminPassword = RandomPasswordResource.Create(new(randomPasswordName));
+        var adminPassword = RandomPasswordResource.Create(new(randomPasswordName));
 
-        Server = new(
+        var server = new Server(
             serverName,
             new()
             {
@@ -25,7 +25,7 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
                 Properties = new ServerPropertiesForDefaultCreateArgs
                 {
                     AdministratorLogin = Username,
-                    AdministratorLoginPassword = AdminPassword.Result,
+                    AdministratorLoginPassword = adminPassword.Result,
                     CreateMode = CreateMode.Default.ToString(),
                     MinimalTlsVersion = MinimalTlsVersionEnum.TLS1_2,
                     SslEnforcement = SslEnforcementEnum.Enabled,
@@ -45,28 +45,31 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
 
         if (args.VNet != null)
         {
-            VNetIntegrationRule = new(
+            var vNetIntegrationRule = new VirtualNetworkRule(
                 vnetRuleName,
                 new()
                 {
                     ServerName = serverName,
                     ResourceGroupName = args.ResourceGroup.Name,
                     VirtualNetworkRuleName = vnetRuleName,
-                    VirtualNetworkSubnetId = args.VNet!.Subnet.Id,
+                    VirtualNetworkSubnetId = args.VNet!.SubnetId,
                     IgnoreMissingVnetServiceEndpoint = true,
                 },
-                new() {DependsOn = new() {Server!,},});
+                new() {DependsOn = new() {server,},});
+
+            VNetIntegrationRuleId = vNetIntegrationRule.Id;
+            VNetIntegrationRuleName = vNetIntegrationRule.Name;
         }
 
         if (args.ShouldCreateFirewallRules && args.FirewallAllowedIpAddresses.Count > 0)
         {
-            FirewallRules = new();
+            var firewallRules = new List<FirewallRule>();
 
             foreach (var allowedIpAddress in args.FirewallAllowedIpAddresses)
             {
                 var ruleName = GetFirewallRuleName(serverName, allowedIpAddress.Key);
 
-                FirewallRules.Add(
+                firewallRules.Add(
                     new(
                         ruleName,
                         new()
@@ -78,16 +81,24 @@ public abstract class BasePostgresSqlServerResource : BaseAzureResource<BasePost
                             FirewallRuleName = allowedIpAddress.Key,
                         }));
             }
+
+            FirewallRuleIds = firewallRules.Select(x => x.Id).ToList();
         }
+
+        ServerName = server.Name;
+        AdminPassword = adminPassword.Result;
+        ServerFQDN = server.FullyQualifiedDomainName;
 
         RegisterOutputs();
     }
 
-    public string Username { get; }
-    public Server? Server { get; }
-    public VirtualNetworkRule? VNetIntegrationRule { get; }
-    public RandomPasswordResource? AdminPassword { get; }
-    public List<FirewallRule>? FirewallRules { get; }
+    public Output<string> Username { get; }
+    public Output<string> ServerName { get; }
+    public Output<string?> ServerFQDN { get; }
+    public Output<string>? VNetIntegrationRuleId { get; }
+    public Output<string>? VNetIntegrationRuleName { get; }
+    public Output<string> AdminPassword { get; }
+    public List<Output<string>>? FirewallRuleIds { get; }
 
     protected readonly PostgresServerResourceArgs Args;
     protected abstract SkuArgs SkuArgs { get; }
