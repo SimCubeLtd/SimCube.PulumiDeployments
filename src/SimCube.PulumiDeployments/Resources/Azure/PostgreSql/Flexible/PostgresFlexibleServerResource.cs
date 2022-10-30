@@ -4,6 +4,7 @@ using Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Inputs;
 using SimCube.PulumiDeployments.Arguments.Azure.PostgreSql.Flexible;
 using CreateMode = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.CreateMode;
 using FirewallRule = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.FirewallRule;
+using FlexibleServer = Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Server;
 
 namespace SimCube.PulumiDeployments.Resources.Azure.PostgreSql.Flexible;
 
@@ -20,7 +21,7 @@ public sealed class PostgresFlexibleServerResource : BaseAzureResource<PostgresF
         var randomPasswordName = $"{serverName}-password";
         var adminPassword = RandomPasswordResource.Create(new(randomPasswordName));
 
-        var server = new Pulumi.AzureNative.DBforPostgreSQL.V20220120Preview.Server(
+        FlexibleServer = new(
             serverName,
             new()
             {
@@ -60,7 +61,7 @@ public sealed class PostgresFlexibleServerResource : BaseAzureResource<PostgresF
                     VirtualNetworkSubnetId = args.VNet!.SubnetId,
                     IgnoreMissingVnetServiceEndpoint = true,
                 },
-                new() {DependsOn = new() {server,},});
+                new() {DependsOn = new() {FlexibleServer,},});
 
             VNetIntegrationRuleId = vNetIntegrationRule.Id;
             VNetIntegrationRuleName = vNetIntegrationRule.Name;
@@ -92,7 +93,7 @@ public sealed class PostgresFlexibleServerResource : BaseAzureResource<PostgresF
 
         ServerName = Output.Create(serverName);
         AdminPassword = adminPassword.Result;
-        ServerFqdn = server.FullyQualifiedDomainName;
+        ServerFqdn = FlexibleServer.FullyQualifiedDomainName;
 
         RegisterOutputs();
     }
@@ -102,6 +103,8 @@ public sealed class PostgresFlexibleServerResource : BaseAzureResource<PostgresF
     public Output<string> GetConnectionString(PostgresFlexibleDatabaseResource databaseResource) =>
         Output.Format(
             $"Host={ServerFqdn};Database={databaseResource.Database.Name};Username={Username};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
+
+    public FlexibleServer FlexibleServer { get; }
 
     public Output<string> Username { get; set; }
     public Output<string> ServerName { get; set;}

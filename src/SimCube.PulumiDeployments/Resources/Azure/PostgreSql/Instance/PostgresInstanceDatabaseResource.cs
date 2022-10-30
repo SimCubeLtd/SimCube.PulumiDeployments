@@ -25,7 +25,7 @@ public sealed class PostgresInstanceDatabaseResource : BaseAzureResource<Postgre
             {
                 DependsOn =
                 {
-                    args.ServerArgs
+                    args.ServerArgs.InstanceServer,
                 },
             });
 
