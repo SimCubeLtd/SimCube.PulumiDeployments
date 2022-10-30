@@ -102,7 +102,7 @@ public sealed class PostgresFlexibleServerResource : BaseAzureResource<PostgresF
 
     public Output<string> GetConnectionString(PostgresFlexibleDatabaseResource databaseResource) =>
         Output.Format(
-            $"Host={ServerFqdn};Database={databaseResource.Database.Name};Username={Username};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
+            $"Host={ServerFqdn};Database={databaseResource.DatabaseName};Username={Username};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
 
     public FlexibleServer FlexibleServer { get; }
 

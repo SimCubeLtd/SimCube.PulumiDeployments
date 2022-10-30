@@ -100,7 +100,7 @@ public sealed class PostgresInstanceServerResource : BaseAzureResource<PostgresI
 
     public Output<string> GetConnectionString(PostgresInstanceDatabaseResource databaseResource) =>
         Output.Format(
-            $"Host={ServerFqdn};Database={databaseResource.Database.Name};Username={Username}@{ServerName};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
+            $"Host={ServerFqdn};Database={databaseResource.DatabaseName};Username={Username}@{ServerName};Password={AdminPassword};Trust Server Certificate=True;SSL Mode=Require;");
 
     public InstanceServer InstanceServer { get; }
 

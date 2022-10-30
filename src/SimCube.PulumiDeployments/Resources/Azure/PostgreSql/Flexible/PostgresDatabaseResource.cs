@@ -11,13 +11,13 @@ public sealed class PostgresFlexibleDatabaseResource : BaseAzureResource<Postgre
         ComponentResourceOptions? options = null)
         : base(name, args, options)
     {
-        var postgresDatabaseName = args.DatabaseName ?? $"{ResourceNames.PostgresDatabase}-{args.Location}-{args.Environment}";
+        DatabaseName = args.DatabaseName ?? $"{ResourceNames.PostgresDatabase}-{args.Location}-{args.Environment}";
 
-        Database = new(
-            postgresDatabaseName,
+        _ = new Database(
+            DatabaseName,
             new()
             {
-                DatabaseName = postgresDatabaseName,
+                DatabaseName = DatabaseName,
                 Charset = "UTF8",
                 Collation = "English_United States.1252",
                 ResourceGroupName = args.ResourceGroup.ResourceGroupName,
@@ -30,14 +30,12 @@ public sealed class PostgresFlexibleDatabaseResource : BaseAzureResource<Postgre
                 },
             });
 
-        ConnectionString = GetConnectionString(args);
+        ConnectionString = args.ServerArgs.GetConnectionString(this);
 
         RegisterOutputs();
     }
 
-    private Output<string> GetConnectionString(PostgresFlexibleDatabaseResourceArgs args) => args.ServerArgs.GetConnectionString(this);
-
-    public Database Database { get; }
+    public string DatabaseName { get; }
 
     public Output<string>? ConnectionString { get; }
 }
