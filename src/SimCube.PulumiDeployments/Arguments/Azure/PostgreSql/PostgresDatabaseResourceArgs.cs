@@ -3,4 +3,4 @@
 namespace SimCube.PulumiDeployments.Arguments.Azure.PostgreSql;
 
 [ExcludeFromCodeCoverage]
-public record PostgresDatabaseResourceArgs(BasePostgresSqlServerResource ServerArgs, string? DatabaseName = null) : BaseAzureResourceArgs;
+public record PostgresDatabaseResourceArgs(BasePostgresServerInstance ServerArgs, string? DatabaseName = null) : BaseAzureResourceArgs;

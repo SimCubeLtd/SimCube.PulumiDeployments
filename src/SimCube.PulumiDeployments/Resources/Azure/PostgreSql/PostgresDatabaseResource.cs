@@ -21,13 +21,6 @@ public sealed class PostgresDatabaseResource : BaseAzureResource<PostgresDatabas
                 Collation = "English_United States.1252",
                 ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ServerName = args.ServerArgs.ServerName,
-            },
-            new()
-            {
-                DependsOn = new()
-                {
-                    args.ServerArgs,
-                },
             });
 
         ConnectionString = GetConnectionString(args);
