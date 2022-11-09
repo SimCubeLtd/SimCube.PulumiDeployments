@@ -6,7 +6,7 @@
     <PackageVersion Include="Pulumi.AzureAD" Version="5.30.0" />
     <PackageVersion Include="Pulumi.Kubernetes" Version="3.22.1" />
     <PackageVersion Include="Pulumi.Command" Version="4.5.0" />
-    <PackageVersion Include="Pulumi.AzureNative" Version="1.84.0" />
+    <PackageVersion Include="Pulumi.AzureNative" Version="1.85.0" />
     <PackageVersion Include="Pulumi.Random" Version="4.8.2" />
   </ItemGroup>
   <ItemGroup Label="ThirdParty">
