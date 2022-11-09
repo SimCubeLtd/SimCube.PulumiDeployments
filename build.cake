@@ -52,7 +52,7 @@ Task("Build")
             {
                 Configuration = configuration,
                 NoRestore = true,
-                ArgumentCustomization = args => 
+                ArgumentCustomization = args =>
                   args
                   .Append($"-p:Version={version}")
                   .Append($"-p:InformationalVersion={version}"),
@@ -66,7 +66,7 @@ Task("Pack")
     .Does(() =>
         {
             DotNetPack("src/SimCube.PulumiDeployments/SimCube.PulumiDeployments.csproj",
-             new DotNetCorePackSettings()
+             new DotNetPackSettings()
                         {
                             NoBuild = true,
                             NoRestore = true,

@@ -5,8 +5,8 @@ public static class ConfigurationExtensions
 {
     public static T GetRequiredFromJson<T>(this Config config, string key)
     {
-        Guard.Against.Null(config, nameof(config));
-        Guard.Against.Null(config, nameof(key));
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentNullException.ThrowIfNull(key, nameof(key));
 
         var options = new JsonSerializerOptions();
         options.Converters.Add(new JsonStringEnumConverter());
@@ -15,8 +15,8 @@ public static class ConfigurationExtensions
 
     public static T? GetOptionalFromJson<T>(this Config config, string key) where T : class
     {
-        Guard.Against.Null(config, nameof(config));
-        Guard.Against.Null(config, nameof(key));
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentNullException.ThrowIfNull(key, nameof(key));
 
         var options = new JsonSerializerOptions();
         options.Converters.Add(new JsonStringEnumConverter());
@@ -26,8 +26,8 @@ public static class ConfigurationExtensions
 
     public static string GetString(this Config config, string key)
     {
-        Guard.Against.Null(config, nameof(config));
-        Guard.Against.Null(config, nameof(key));
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentNullException.ThrowIfNull(key, nameof(key));
 
         return config.Require(key);
     }
@@ -72,7 +72,7 @@ public static class ConfigurationExtensions
         this BaseAzureResourceArgs configuration,
         string location)
     {
-        Guard.Against.Null(configuration, nameof(configuration));
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
 
         return new()
         {

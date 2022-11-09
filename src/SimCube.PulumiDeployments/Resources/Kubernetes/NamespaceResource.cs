@@ -37,7 +37,7 @@ public sealed class NamespaceResource : ComponentResource
     /// <returns></returns>
     public static NamespaceResource Create(string namespaceName, ComponentResourceOptions componentResourceOptions)
     {
-        Guard.Against.Null(componentResourceOptions, nameof(componentResourceOptions));
+        ArgumentNullException.ThrowIfNull(componentResourceOptions, nameof(componentResourceOptions));
 
         var @namespace = new NamespaceResource(namespaceName, componentResourceOptions);
 
