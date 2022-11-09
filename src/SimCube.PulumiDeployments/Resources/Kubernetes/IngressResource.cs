@@ -6,7 +6,7 @@ public sealed class IngressResource : ComponentResource
     private IngressResource(NamespaceResource @namespace, string name, IngressConfiguration[] ingressConfiguration, string? serviceName, ComponentResourceOptions? options = null)
         : base(nameof(IngressResource), name, options)
     {
-        Guard.Against.Null(ingressConfiguration, nameof(ingressConfiguration));
+        ArgumentNullException.ThrowIfNull(ingressConfiguration, nameof(ingressConfiguration));
 
         var customResourceOptions = new CustomResourceOptions
         {
@@ -50,8 +50,8 @@ public sealed class IngressResource : ComponentResource
     public static IngressResource Create(NamespaceResource @namespace, string name, IngressConfiguration[] ingressConfiguration,
         string? serviceName = null, ComponentResourceOptions? componentResourceOptions = null)
     {
-        Guard.Against.Null(ingressConfiguration, nameof(ingressConfiguration));
-        Guard.Against.Null(@namespace, nameof(@namespace));
+        ArgumentNullException.ThrowIfNull(ingressConfiguration, nameof(ingressConfiguration));
+        ArgumentNullException.ThrowIfNull(@namespace, nameof(@namespace));
 
         var ingress = new IngressResource(@namespace, name, ingressConfiguration, serviceName, componentResourceOptions);
 

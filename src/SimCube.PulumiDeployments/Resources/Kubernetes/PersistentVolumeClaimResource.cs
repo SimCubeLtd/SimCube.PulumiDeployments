@@ -11,7 +11,7 @@ public sealed class PersistentVolumeClaimResource : ComponentResource
         ComponentResourceOptions? options = null)
         : base(nameof(PersistentVolumeClaimResource), claimName, options)
     {
-        Guard.Against.Null(@namespace, nameof(@namespace));
+        ArgumentNullException.ThrowIfNull(@namespace, nameof(@namespace));
 
         var customResourceOptions = new CustomResourceOptions
         {
@@ -61,7 +61,7 @@ public sealed class PersistentVolumeClaimResource : ComponentResource
         bool isReadWriteOnce = true,
         ComponentResourceOptions? options = null)
     {
-        Guard.Against.Null(@namespace, nameof(@namespace));
+        ArgumentNullException.ThrowIfNull(@namespace, nameof(@namespace));
 
         _ = new PersistentVolumeClaimResource(
             @namespace,

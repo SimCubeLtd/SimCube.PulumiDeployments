@@ -9,8 +9,9 @@ public sealed class DeploymentResource : ComponentResource
     private DeploymentResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorValue, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? options = null)
         : base(nameof(DeploymentResource), name, options)
     {
-        Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
-        Guard.Against.NullOrEmpty(defaultSelectorValue, nameof(defaultSelectorValue));
+
+        ArgumentNullException.ThrowIfNull(deploymentConfiguration, nameof(deploymentConfiguration));
+        ArgumentNullException.ThrowIfNull(defaultSelectorValue, nameof(defaultSelectorValue));
 
         var customResourceOptions = new CustomResourceOptions
         {
@@ -41,7 +42,7 @@ public sealed class DeploymentResource : ComponentResource
 
     public static DeploymentResource Create(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorValue, List<EnvVarArgs>? envVariables = null, ComponentResourceOptions? componentResourceOptions = null)
     {
-        Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
+        ArgumentNullException.ThrowIfNull(deploymentConfiguration, nameof(deploymentConfiguration));
 
         var deployment = new DeploymentResource(@namespace, name, deploymentConfiguration, defaultSelectorValue, envVariables, componentResourceOptions);
 

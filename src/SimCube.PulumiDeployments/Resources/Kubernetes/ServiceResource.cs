@@ -6,7 +6,7 @@ public sealed class ServiceResource : ComponentResource
     private ServiceResource(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorKeyValue, ComponentResourceOptions? options = null)
         : base(nameof(ServiceResource), name, options)
     {
-        Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
+        ArgumentNullException.ThrowIfNull(deploymentConfiguration, nameof(deploymentConfiguration));
 
         var customResourceOptions = new CustomResourceOptions {DependsOn = new List<Resource> {@namespace,},};
 
@@ -27,7 +27,7 @@ public sealed class ServiceResource : ComponentResource
 
     public static ServiceResource Create(NamespaceResource @namespace, string name, DeploymentConfiguration deploymentConfiguration, string defaultSelectorKeyValue, ComponentResourceOptions? componentResourceOptions = null)
     {
-        Guard.Against.Null(deploymentConfiguration, nameof(deploymentConfiguration));
+        ArgumentNullException.ThrowIfNull(deploymentConfiguration, nameof(deploymentConfiguration));
 
         var service = new ServiceResource(@namespace, name, deploymentConfiguration, defaultSelectorKeyValue, componentResourceOptions);
 
