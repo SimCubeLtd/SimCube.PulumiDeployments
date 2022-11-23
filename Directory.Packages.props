@@ -3,13 +3,13 @@
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup Label="PulumiPackages">
-    <PackageVersion Include="Pulumi.AzureAD" Version="5.30.0" />
+    <PackageVersion Include="Pulumi.AzureAD" Version="5.31.0" />
     <PackageVersion Include="Pulumi.Kubernetes" Version="3.22.1" />
     <PackageVersion Include="Pulumi.Command" Version="4.5.0" />
-    <PackageVersion Include="Pulumi.AzureNative" Version="1.85.0" />
+    <PackageVersion Include="Pulumi.AzureNative" Version="1.87.0" />
     <PackageVersion Include="Pulumi.Random" Version="4.8.2" />
   </ItemGroup>
   <ItemGroup Label="ThirdParty">
-    <PackageVersion Include="FluentValidation" Version="11.2.2" />
+    <PackageVersion Include="FluentValidation" Version="11.4.0" />
   </ItemGroup>
 </Project>
