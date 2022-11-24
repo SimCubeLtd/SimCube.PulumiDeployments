@@ -6,8 +6,6 @@ namespace SimCube.PulumiDeployments.Resources.Azure.AppService;
 [ExcludeFromCodeCoverage]
 public sealed class FunctionAppResource : BaseAzureResource<FunctionAppResource, FunctionAppResourceArgs>
 {
-    private readonly Input<string> _websitePackage = "WEBSITE_RUN_FROM_PACKAGE";
-
     public FunctionAppResource(
         string name,
         FunctionAppResourceArgs args,
@@ -18,11 +16,7 @@ public sealed class FunctionAppResource : BaseAzureResource<FunctionAppResource,
             options)
     {
         var defaultFunctionAppName = $"{args.ApplicationName}-{ResourceNames.ApiWebApp}-{args.Location}-{args.Environment}";
-        var defaultEndpoint = $"https://{args.ApplicationName}-{ResourceNames.UiWebApp}-{args.Location}-{args.Environment}.azurewebsites.net";
-
-        PopulateAppSettingsWithBlobUrl(args);
-        PopulateCorsConfigWithExtraHosts(args, defaultEndpoint);
-
+       
         var webApp = new WebApp(
             args.FunctionName ?? defaultFunctionAppName,
             new()
@@ -31,7 +25,7 @@ public sealed class FunctionAppResource : BaseAzureResource<FunctionAppResource,
                 ResourceGroupName = args.ResourceGroup.ResourceGroupName,
                 ServerFarmId = args.AppServicePlan.AppServicePlanId,
                 Name = args.FunctionName ?? defaultFunctionAppName,
-                SiteConfig = args.SiteConfig,
+                SiteConfig = args.SiteConfig ?? new SiteConfigArgs(),
                 Tags = GetResourceTags,
             });
 
@@ -39,43 +33,6 @@ public sealed class FunctionAppResource : BaseAzureResource<FunctionAppResource,
         FunctionAppHostname = webApp.DefaultHostName;
 
         RegisterOutputs();
-    }
-
-    private static void PopulateCorsConfigWithExtraHosts(FunctionAppResourceArgs args, string defaultEndpoint)
-    {
-        var corsConfig = new CorsSettingsArgs
-        {
-            SupportCredentials = args.CorsSupportsCredentials,
-            AllowedOrigins = new List<string>
-            {
-                args.EndpointAddress ?? defaultEndpoint,
-            },
-        };
-
-        if (args.ExtraOrigins?.Any() == true)
-        {
-            corsConfig.AllowedOrigins.AddRange(args.ExtraOrigins);
-        }
-
-        args.SiteConfig.Cors = corsConfig;
-    }
-
-    private void PopulateAppSettingsWithBlobUrl(FunctionAppResourceArgs args)
-    {
-        var appSettings = args.SiteConfig.AppSettings.Cast<NameValuePairArgs>().ToList();
-
-        if (appSettings.Any(x => x.Name == _websitePackage) || args.DeploymentBlob.BlobReadUrl is null)
-        {
-            return;
-        }
-
-        appSettings.Add(new()
-        {
-            Name = _websitePackage,
-            Value = args.DeploymentBlob.BlobReadUrl,
-        });
-
-        args.SiteConfig.AppSettings = appSettings;
     }
 
     public Output<string> FunctionAppHostname { get; set; }
