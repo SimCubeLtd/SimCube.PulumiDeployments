@@ -60,7 +60,8 @@ public sealed class VirtualNetworkResource : BaseAzureResource<VirtualNetworkRes
             new()
             {
                 VirtualNetworkName = vnetName,
-                AddressSpace = new AddressSpaceArgs() {
+                AddressSpace = new AddressSpaceArgs
+                {
                     AddressPrefixes =
                     {
                         args.AddressPrefix ?? string.Empty,
