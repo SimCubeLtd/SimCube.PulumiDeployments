@@ -37,9 +37,27 @@ public sealed class BlobStorageResource : BaseAzureResource<BlobStorageResource,
             });
 
         StorageAccountName = storageAccount.Name;
+        StorageAccountConnectionString = GetConnectionString(args.ResourceGroup.ResourceGroupName, StorageAccountName);
 
         RegisterOutputs();
     }
-
+    
     public Output<string> StorageAccountName { get; }
+    public Output<string> StorageAccountConnectionString { get; }
+    
+    public static Output<string> GetConnectionString(Input<string> resourceGroupName, Input<string> accountName)
+    {
+        var storageAccountKeys = ListStorageAccountKeys.Invoke(new()
+        {
+            ResourceGroupName = resourceGroupName,
+            AccountName = accountName,
+        });
+
+        return storageAccountKeys.Apply(keys =>
+        {
+            var primaryStorageKey = keys.Keys[0].Value;
+
+            return Output.Format($"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={primaryStorageKey}");
+        });
+    }
 }

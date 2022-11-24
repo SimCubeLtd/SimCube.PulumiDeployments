@@ -89,7 +89,7 @@ public sealed class DeploymentResource : ComponentResource
         var containerArgs = new ContainerArgs
         {
             Image = $"{deploymentConfiguration.Image}:{Environment.GetEnvironmentVariable("IMAGE_BUILD_VERSION") ?? "latest"}",
-            Ports = new List<ContainerPortArgs>()
+            Ports = new List<ContainerPortArgs>
             {
                 new()
                 {
