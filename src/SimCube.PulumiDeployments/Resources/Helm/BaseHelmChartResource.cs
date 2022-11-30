@@ -8,7 +8,7 @@ namespace SimCube.PulumiDeployments.Resources.Helm;
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = "I Want them.")]
 public abstract class BaseHelmChartResource : ComponentResource
 {
-    protected readonly CustomResourceOptions CustomResourceOptions;
+    public readonly CustomResourceOptions CustomResourceOptions;
     public const string HelmValuesFolder = "HelmValues";
 
     protected BaseHelmChartResource(
@@ -25,9 +25,9 @@ public abstract class BaseHelmChartResource : ComponentResource
             },
         };
 
-    protected abstract string HelmValuesFile { get; }
+    public abstract string HelmValuesFile { get; }
 
-    protected List<FileAsset> RenderYamlValues(Dictionary<string, string?> environmentalVariables)
+    public List<FileAsset> RenderYamlValues(Dictionary<string, string?> environmentalVariables)
     {
         var helmValuesFile = GetHelmValuesFilePath();
 
