@@ -1,6 +1,6 @@
 ﻿<Project>
   <ItemGroup Label="Microsoft">
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup Label="PulumiPackages">
     <PackageVersion Include="Pulumi.AzureAD" Version="5.32.0" />
