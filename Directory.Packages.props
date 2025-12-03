@@ -10,6 +10,6 @@
     <PackageVersion Include="Pulumi.Random" Version="4.8.2" />
   </ItemGroup>
   <ItemGroup Label="ThirdParty">
-    <PackageVersion Include="FluentValidation" Version="11.4.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
   </ItemGroup>
 </Project>
